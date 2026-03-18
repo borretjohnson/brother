@@ -580,12 +580,15 @@ body {
 .mute-btn:hover { border-color:rgba(231,191,145,.5) }
 
 /* ── АДАПТИВ ── */
-@media(max-width:760px) {
-  .timeline::before { left:18px }
-  .tl-item { padding-left:40px }
-  .tl-dot { left:18px; top:24px }
-  .tl-card { width:100%!important; margin:0!important }
-  .screen-inner { padding:52px 18px 88px }
+@media(max-width:900px) {
+  .tl-inner { max-width:100% }
+  .timeline::before { left:16px }
+  .tl-item { padding-left:36px; padding-right:4px }
+  .tl-dot { left:16px; top:22px; width:10px; height:10px }
+  .tl-card { width:100%!important; margin:0!important; padding:14px 14px }
+  .tl-text { font-size:.93rem }
+  .screen-inner { padding:52px 14px 88px }
+  .tl-inner { padding-left:10px; padding-right:10px }
   .hero-line { font-size:clamp(2.2rem,14vw,3.6rem) }
   .section-title { font-size:clamp(1.6rem,9vw,2.4rem) }
   .final-title { font-size:clamp(2.4rem,12vw,3.8rem) }
