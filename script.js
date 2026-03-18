@@ -6,8 +6,8 @@
 /* ─────────────────────────────────────────
    ▼ ВСТАВЬ СВОИ ДАННЫЕ
 ───────────────────────────────────────── */
-const BOT_TOKEN = "PASTE_YOUR_TOKEN";
-const CHAT_ID   = "PASTE_YOUR_CHAT_ID";
+const BOT_TOKEN = "8649068293:AAGWOogyAQStZK6WUBua7KRzU40-imu_6TA";
+const CHAT_ID   = "8500370370";
 
 /* ─────────────────────────────────────────
    ▼ ТЕКСТ ПИСЬМА
