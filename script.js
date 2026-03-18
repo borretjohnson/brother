@@ -591,12 +591,19 @@ const btnNo        = document.getElementById('btnNo');
 const envOverlay   = document.getElementById('envOverlay');
 const quietOverlay = document.getElementById('quietOverlay');
 
-btnYes && btnYes.addEventListener('click', () => {
-  // Взрыв частиц!
-  launchBurst();
-  // Небольшая пауза — пусть частицы полетят, потом конверт
-  setTimeout(() => openEnvelope(), 600);
+function hideOtherBtn(btn) {
+  if (!btn) return;
+  btn.style.transition = 'opacity .4s ease, transform .4s ease';
+  btn.style.opacity = '0';
+  btn.style.pointerEvents = 'none';
+  btn.style.transform = 'translateY(8px)';
+  setTimeout(() => { btn.style.display = 'none'; }, 400);
+}
 
+btnYes && btnYes.addEventListener('click', () => {
+  hideOtherBtn(btnNo);
+  launchBurst();
+  setTimeout(() => openEnvelope(), 600);
   fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
     method:'POST', headers:{'Content-Type':'application/json'},
     body:JSON.stringify({ chat_id:CHAT_ID, text:'Он нажал: СНОВА БРАТЬЯ 🤝' })
@@ -604,6 +611,7 @@ btnYes && btnYes.addEventListener('click', () => {
 });
 
 btnNo && btnNo.addEventListener('click', () => {
+  hideOtherBtn(btnYes);
   quietOverlay.classList.remove('hidden');
   requestAnimationFrame(() => requestAnimationFrame(() => quietOverlay.classList.add('active')));
 });
@@ -630,6 +638,17 @@ function openEnvelope() {
   document.getElementById('letterBody').textContent = '';
   document.getElementById('envFlap').classList.remove('open');
   document.getElementById('envelope').classList.remove('fly-away');
+  // Сброс формы ответа
+  const _reply   = document.getElementById('letterReply');
+  const _ta      = document.getElementById('replyTextarea');
+  const _status  = document.getElementById('replyStatus');
+  const _sendBtn = document.getElementById('replySend');
+  const _lbl     = document.querySelector('.reply-label');
+  if (_reply)   { _reply.classList.add('hidden'); _reply.classList.remove('show'); }
+  if (_ta)      { _ta.value = ''; _ta.style.display = ''; }
+  if (_status)  { _status.classList.add('hidden'); _status.classList.remove('show'); _status.textContent = ''; }
+  if (_sendBtn) { _sendBtn.disabled = false; _sendBtn.textContent = 'отправить →'; _sendBtn.style.display = ''; }
+  if (_lbl)     { _lbl.style.display = ''; }
 }
 
 // Клик по сургучной печати
@@ -678,7 +697,11 @@ function startConvertAnim() {
   setTimeout(() => envelope.classList.add('fly-away'), 1700);
   setTimeout(() => letter.classList.add('visible'), 2100);
   setTimeout(() => {
-    typewriterLetter(body, LETTER_TEXT, 30, () => close.classList.add('show'));
+    typewriterLetter(body, LETTER_TEXT, 30, () => {
+      close.classList.add('show');
+      // Показываем форму ответа после того как письмо допечаталось
+      showReplyForm();
+    });
   }, 2500);
 }
 
@@ -715,3 +738,82 @@ muteBtn && muteBtn.addEventListener('click', () => {
   muted = !muted; audio.muted = muted;
   muteIcon.textContent = muted ? '✕' : '♪';
 });
+
+
+/* ══════════════════════════════════════════
+   ФОРМА ОТВЕТА В ПИСЬМЕ
+══════════════════════════════════════════ */
+function showReplyForm() {
+  const reply = document.getElementById('letterReply');
+  if (!reply) return;
+  reply.classList.remove('hidden');
+  // Небольшая задержка чтобы transition сработал
+  requestAnimationFrame(() => requestAnimationFrame(() => reply.classList.add('show')));
+
+  // Прокручиваем письмо вниз чтобы форма была видна
+  const letter = document.getElementById('envLetter');
+  if (letter) setTimeout(() => {
+    letter.scrollTo({ top: letter.scrollHeight, behavior: 'smooth' });
+  }, 400);
+}
+
+(function initReplyForm() {
+  const sendBtn  = document.getElementById('replySend');
+  const textarea = document.getElementById('replyTextarea');
+  const status   = document.getElementById('replyStatus');
+  if (!sendBtn || !textarea || !status) return;
+
+  sendBtn.addEventListener('click', async () => {
+    const text = textarea.value.trim();
+    if (!text) {
+      // Лёгкое покачивание если пусто
+      textarea.style.transition = 'border-color .1s';
+      textarea.style.borderColor = 'rgba(180,60,40,.5)';
+      setTimeout(() => textarea.style.borderColor = '', 600);
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'отправляю...';
+
+    try {
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          // Текст который придёт тебе в бота
+          text: `✉️ Он ответил на письмо:\n\n"${text}"`
+        })
+      });
+
+      // Успех
+      sendBtn.style.display = 'none';
+      textarea.style.display = 'none';
+      document.querySelector('.reply-label').style.display = 'none';
+      status.classList.remove('hidden');
+      status.classList.add('show');
+      // Меняй текст подтверждения здесь ↓
+      status.textContent = 'отправлено. я прочитаю.';
+
+    } catch (e) {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'отправить →';
+      status.classList.remove('hidden');
+      status.classList.add('show');
+      status.textContent = 'что-то пошло не так, попробуй ещё раз';
+      setTimeout(() => {
+        status.classList.remove('show');
+        status.classList.add('hidden');
+      }, 3000);
+    }
+  });
+
+  // Отправка по Ctrl+Enter / Cmd+Enter
+  textarea.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+})();
