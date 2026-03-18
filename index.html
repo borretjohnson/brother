@@ -227,6 +227,21 @@
       <p class="letter-greeting">Брат,</p>
       <p class="letter-body" id="letterBody"></p>
       <p class="letter-sign">— твой друг</p>
+
+      <!-- Форма ответа — появляется после того как письмо допечаталось -->
+      <div class="letter-reply hidden" id="letterReply">
+        <div class="reply-divider"></div>
+        <p class="reply-label">твой ответ:</p>
+        <textarea
+          class="reply-textarea"
+          id="replyTextarea"
+          placeholder="напиши что думаешь..."
+          rows="3"
+          maxlength="500"
+        ></textarea>
+        <button class="reply-send" id="replySend">отправить →</button>
+        <p class="reply-status hidden" id="replyStatus"></p>
+      </div>
     </div>
   </div>
 
