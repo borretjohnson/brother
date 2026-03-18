@@ -591,12 +591,19 @@ const btnNo        = document.getElementById('btnNo');
 const envOverlay   = document.getElementById('envOverlay');
 const quietOverlay = document.getElementById('quietOverlay');
 
-btnYes && btnYes.addEventListener('click', () => {
-  // Взрыв частиц!
-  launchBurst();
-  // Небольшая пауза — пусть частицы полетят, потом конверт
-  setTimeout(() => openEnvelope(), 600);
+function hideOtherBtn(btn) {
+  if (!btn) return;
+  btn.style.transition = 'opacity .4s ease, transform .4s ease';
+  btn.style.opacity = '0';
+  btn.style.pointerEvents = 'none';
+  btn.style.transform = 'translateY(8px)';
+  setTimeout(() => { btn.style.display = 'none'; }, 400);
+}
 
+btnYes && btnYes.addEventListener('click', () => {
+  hideOtherBtn(btnNo);
+  launchBurst();
+  setTimeout(() => openEnvelope(), 600);
   fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
     method:'POST', headers:{'Content-Type':'application/json'},
     body:JSON.stringify({ chat_id:CHAT_ID, text:'Он нажал: СНОВА БРАТЬЯ 🤝' })
@@ -604,6 +611,7 @@ btnYes && btnYes.addEventListener('click', () => {
 });
 
 btnNo && btnNo.addEventListener('click', () => {
+  hideOtherBtn(btnYes);
   quietOverlay.classList.remove('hidden');
   requestAnimationFrame(() => requestAnimationFrame(() => quietOverlay.classList.add('active')));
 });
