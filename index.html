@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Брат.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<canvas id="grain"></canvas>
+<canvas id="particles"></canvas>
+<!-- Канвас для взрыва частиц при YES -->
+<canvas id="burst" style="position:fixed;inset:0;pointer-events:none;z-index:500;display:none"></canvas>
+
+<div class="bg-art" aria-hidden="true">
+  <!-- parallax-слой — двигается за мышью -->
+  <div class="parallax-layer" id="parallaxLayer">
+    <div class="fog fog-1"></div>
+    <div class="fog fog-2"></div>
+  </div>
+  <div class="scratches"></div>
+  <div class="vignette"></div>
+  <div class="frame-corners tl"></div>
+  <div class="frame-corners br"></div>
+</div>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<div id="preloader">
+  <p class="pre-label">инициализация</p>
+  <div class="pre-bar"><div class="pre-fill" id="preFill"></div></div>
+  <p class="pre-hint" id="preHint">&nbsp;</p>
+</div>
+
+<!-- ═══ ЭКРАН 1 ═══ -->
+<section class="screen hidden" id="s1">
+  <div class="screen-inner opening-inner">
+    <div class="opening-mark">† братство †</div>
+    <div class="typewriter-wrap">
+      <p class="hero-line" id="heroLine"></p>
+      <span class="tw-cursor" id="twCursor">|</span>
+    </div>
+    <div class="body-block" id="bodyBlock1">
+      <p class="bl">Ну вот мы ведь не можем так просто взять</p>
+      <p class="bl">и проебать нашу с тобой дружбу. Согласись?</p>
+      <p class="bl gap">&nbsp;</p>
+      <p class="bl">Не знаю, как для тебя,</p>
+      <p class="bl">но для меня ты один из самых важных людей.</p>
+      <p class="bl gap">&nbsp;</p>
+      <p class="bl accent">Ты мне в натуре очень важен.</p>
+    </div>
+    <button class="nxt glow-btn" data-to="s2">ДАЛЬШЕ</button>
+  </div>
+</section>
+
+<!-- ═══ ЭКРАН 2 — ТАЙМЛАЙН ═══ -->
+<section class="screen hidden" id="s2">
+  <div class="screen-inner tl-inner">
+    <p class="section-eyebrow">летопись</p>
+    <h2 class="section-title">То, что не хочется терять.</h2>
+    <div class="timeline" id="timeline">
+      <div class="tl-item" data-side="left">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-year">начало</span>
+          <p class="tl-text">Мы с тобой вообще с детства вместе. С садика. Даже не помню, как это началось — просто ты всегда был рядом.</p>
+        </div>
+      </div>
+      <div class="tl-item" data-side="right">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-year">двор</span>
+          <p class="tl-text">Турники, улица, дни напролёт. Тогда всё было просто — мы просто выходили и были вместе.</p>
+        </div>
+      </div>
+      <div class="tl-item" data-side="left">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-year">ночи</span>
+          <p class="tl-text">Дота по ночам, когда время вообще переставало существовать. Мы могли сидеть до утра и нам было нормально.</p>
+        </div>
+      </div>
+      <div class="tl-item" data-side="right">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-year">прогулки</span>
+          <p class="tl-text">Наши ночные гулянки и разговоры, по-настоящему. Таких разговоров у меня больше ни с кем не было.</p>
+        </div>
+      </div>
+      <div class="tl-item" data-side="left">
+        <div class="tl-dot special-dot"></div>
+        <div class="tl-card tl-card--special">
+          <span class="tl-year">сейчас</span>
+          <p class="tl-text">Зал с тобой — это было не просто тренировки. Это было время, когда всё становилось на свои места. Я не хочу, чтобы на этом всё оборвалось.</p>
+        </div>
+      </div>
+    </div>
+    <button class="nxt glow-btn" data-to="s3">ДАЛЬШЕ</button>
+  </div>
+</section>
+
+<!-- ═══ ЭКРАН 3 — КАРТА ═══ -->
+<section class="screen hidden" id="s3">
+  <div class="screen-inner map-inner">
+    <p class="section-eyebrow">места</p>
+    <h2 class="section-title">Точки, где мы были живыми.</h2>
+    <div class="map-wrap">
+      <svg id="mapSvg" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+        <g class="map-bg-lines">
+          <line x1="0" y1="100" x2="900" y2="100"/>
+          <line x1="0" y1="200" x2="900" y2="200"/>
+          <line x1="0" y1="300" x2="900" y2="300"/>
+          <line x1="0" y1="400" x2="900" y2="400"/>
+          <line x1="150" y1="0" x2="150" y2="500"/>
+          <line x1="300" y1="0" x2="300" y2="500"/>
+          <line x1="450" y1="0" x2="450" y2="500"/>
+          <line x1="600" y1="0" x2="600" y2="500"/>
+          <line x1="750" y1="0" x2="750" y2="500"/>
+        </g>
+        <g id="mapPoints"></g>
+      </svg>
+      <div class="map-tooltip hidden" id="mapTooltip">
+        <p class="tt-city" id="ttCity"></p>
+        <p class="tt-memo" id="ttMemo"></p>
+        <button class="tt-close" id="ttClose">✕</button>
+      </div>
+    </div>
+    <p class="map-hint">нажми на точку</p>
+    <button class="nxt glow-btn" data-to="s4">ДАЛЬШЕ</button>
+  </div>
+</section>
+
+<!-- ═══ ЭКРАН 4 — ГАЛЕРЕЯ (fullscreen сторис) ═══ -->
+<section class="screen hidden" id="s4">
+  <div class="screen-inner gallery-intro-inner">
+    <p class="section-eyebrow">воспоминания</p>
+    <h2 class="section-title">Всё это было.</h2>
+    <div class="body-block" id="bodyBlock4">
+      <p class="bl">Мы с тобой не просто так шли рядом столько времени.</p>
+      <p class="bl">Слишком много всего было, чтобы это просто исчезло.</p>
+      <p class="bl gap">&nbsp;</p>
+      <p class="bl serif-italic">Листай. Вспоминай.</p>
+    </div>
+    <button class="nxt glow-btn" id="btnStartGallery">СМОТРЕТЬ →</button>
+  </div>
+</section>
+
+<!-- ═══ FULLSCREEN ГАЛЕРЕЯ ═══ -->
+<div class="gallery-fs hidden" id="galleryFs">
+  <!-- Фон-фото с blur -->
+  <div class="gfs-bg" id="gfsBg"></div>
+  <!-- Основное фото -->
+  <div class="gfs-photo-wrap" id="gfsPhotoWrap">
+    <img class="gfs-photo" id="gfsPhoto" src="" alt=""/>
+    <!-- Наложение кино-зерна поверх фото -->
+    <div class="gfs-film"></div>
+  </div>
+  <!-- Текст снизу -->
+  <div class="gfs-caption" id="gfsCaption">
+    <p class="gfs-index" id="gfsIndex">01 / 06</p>
+    <p class="gfs-text" id="gfsText"></p>
+  </div>
+  <!-- Навигация -->
+  <button class="gfs-arrow gfs-prev" id="gfsPrev">←</button>
+  <button class="gfs-arrow gfs-next" id="gfsNext">→</button>
+  <!-- Прогресс-бар -->
+  <div class="gfs-progress" id="gfsProgress">
+    <!-- точки добавляются JS -->
+  </div>
+  <!-- Кнопка выхода -->
+  <button class="gfs-exit" id="gfsExit">✕</button>
+</div>
+
+<!-- ═══ ЭКРАН 5 — ФИНАЛ ═══ -->
+<section class="screen hidden" id="s5">
+  <div class="screen-inner final-inner">
+    <p class="section-eyebrow">последнее</p>
+    <p class="final-title">Твой ход.</p>
+    <p class="final-sub">Я уже сделал свой.</p>
+    <div class="final-btns">
+      <button class="yes-btn" id="btnYes">
+        <span>СНОВА БРАТЬЯ</span>
+        <span class="btn-shimmer" aria-hidden="true"></span>
+      </button>
+      <button class="no-btn" id="btnNo">проигнорировать</button>
+    </div>
+    <p class="easter-hint hidden" id="easterHint">psst... тут есть ещё кое-что</p>
+  </div>
+</section>
+
+<!-- ═══ КОНВЕРТ ═══ -->
+<div class="envelope-overlay hidden" id="envOverlay">
+  <!-- СУРГУЧНАЯ ПЕЧАТЬ — появляется первой, надо тапнуть -->
+  <div class="wax-seal-screen" id="waxScreen">
+    <div class="wax-seal" id="waxSeal">
+      <div class="wax-seal-inner">
+        <span class="wax-glyph">✦</span>
+      </div>
+      <svg class="wax-cracks hidden" id="waxCracks" viewBox="0 0 120 120">
+        <line x1="60" y1="60" x2="12" y2="18" class="crack"/>
+        <line x1="60" y1="60" x2="108" y2="22" class="crack"/>
+        <line x1="60" y1="60" x2="95" y2="105" class="crack"/>
+        <line x1="60" y1="60" x2="28" y2="100" class="crack"/>
+        <line x1="60" y1="60" x2="60" y2="8" class="crack"/>
+      </svg>
+    </div>
+    <p class="wax-hint">сломай печать</p>
+  </div>
+
+  <!-- КОНВЕРТ (появляется после печати) -->
+  <div class="env-scene hidden" id="envScene">
+    <div class="envelope" id="envelope">
+      <div class="env-back"></div>
+      <div class="env-flap" id="envFlap"></div>
+      <div class="env-front"></div>
+    </div>
+  </div>
+
+  <!-- ПИСЬМО -->
+  <div class="env-letter" id="envLetter">
+    <div class="letter-content">
+      <p class="letter-greeting">Брат,</p>
+      <p class="letter-body" id="letterBody"></p>
+      <p class="letter-sign">— твой друг</p>
+    </div>
+  </div>
+
+  <button class="env-close" id="envClose">закрыть ✕</button>
+</div>
+
+<!-- ═══ ТИХИЙ ОВЕРЛЕЙ (NO) ═══ -->
+<div class="quiet-overlay hidden" id="quietOverlay">
+  <div class="quiet-content">
+    <p id="quietText">Понял.
+
+Я не буду навязываться.
+
+Но ты всё равно мне не чужой.</p>
+    <button class="quiet-close" id="quietClose">закрыть</button>
+  </div>
+</div>
+
+<!-- ═══ ПАСХАЛКА ═══ -->
+<div class="secret-overlay hidden" id="secretOverlay">
+  <div class="secret-content">
+    <p class="secret-emoji">⚔</p>
+    <p class="secret-text">нашёл.</p>
+    <p class="secret-sub">значит всё ещё смотришь внимательно.</p>
+    <button class="secret-close" id="secretClose">закрыть</button>
+  </div>
+</div>
+
+<button class="mute-btn" id="muteBtn" title="Звук"><span id="muteIcon">♪</span></button>
+
+<nav class="progress-dots" id="progressDots" aria-hidden="true">
+  <span class="pd" data-screen="s1"></span>
+  <span class="pd" data-screen="s2"></span>
+  <span class="pd" data-screen="s3"></span>
+  <span class="pd" data-screen="s4"></span>
+  <span class="pd" data-screen="s5"></span>
+</nav>
+
+<audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
+<!-- Звук щелчка для галереи — можно заменить на свой -->
+<audio id="clickSnd" src="click.mp3" preload="auto"></audio>
+
+<script src="script.js"></script>
+</body>
+</html>
